@@ -20,7 +20,7 @@ export default {
         return {
             active: sessionStorage.getItem('active') | 0,
             footerItem: [
-                { title: '电影/影院', icon: 'icon-dianying', toRouter: '/home/movie', index: 0 },
+                { title: '电影/影院', icon: 'icon-dianying', toRouter: '/home/movie/hot', index: 0 },
                 { title: '视频', icon: 'icon-shipin', toRouter: '/home/video', index: 1 },
                 { title: '小视频', icon: 'icon-shipin1', toRouter: '/home/shortVideo', index: 2 },
                 { title: '演出', icon: 'icon-piaoquan', toRouter: '/home/show', index: 3 },
@@ -29,8 +29,8 @@ export default {
         };
     },
     watch: {
-        $route(val) {
-            console.log(val);
+        $route() {
+            // console.log(val);
             this.footerItem.forEach(item => {
                 if (item.toRouter == this.$route.path) {
                     this.active = item.index;
@@ -53,6 +53,9 @@ export default {
                 this.active = item.index;
             }
         });
+    },
+    mounted() {
+        this.active = sessionStorage.getItem('active');
     },
 };
 </script>

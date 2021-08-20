@@ -70,4 +70,17 @@ const router = new VueRouter({
     routes,
 });
 
+const VueRouterPush = VueRouter.prototype.push;
+VueRouter.prototype.push = function push(to) {
+    return VueRouterPush.call(this, to).catch(err => err);
+};
+router.beforeEach((to, from, next) => {
+    if (to.path == '/home/show') {
+        alert('你没有权限哦');
+        sessionStorage.setItem('active', 0);
+        next('/home/movie');
+    } else {
+        next();
+    }
+});
 export default router;

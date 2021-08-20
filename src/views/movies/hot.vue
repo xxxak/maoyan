@@ -37,8 +37,7 @@ export default {
                 this.scrollY.refresh();
             }
         },
-        changeScoll(val) {
-            console.log(val);
+        changeScoll() {
             this.$nextTick(function () {
                 this.initNormalY();
             });

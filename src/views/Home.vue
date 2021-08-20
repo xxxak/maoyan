@@ -15,45 +15,45 @@
 </template>
 <script>
 import myFooter from '../components/home/MyFooter';
-import BScroll from 'better-scroll';
+// import BScroll from 'better-scroll';
 
 export default {
     data() {
         return {
-            num: 12,
+            // num: 12,
         };
     },
     components: {
         myFooter,
     },
     methods: {
-        initNormalY() {
-            if (!this.scrollY) {
-                this.scrollY = new BScroll('.wrapper', {
-                    scrollX: false,
-                    scrollY: true,
-                    click: true,
-                    pullUpLoad: {
-                        threshold: -50, // 当上拉距离超过30px时触发 pullingUp 事件
-                    },
-                });
-                let that = this;
-                this.scrollY.on('pullingUp', () => {
-                    console.log('下拉完成');
-                    that.num++;
-                    this.scrollY.finishPullUp(); // 事情做完，需要调用此方法告诉 better-scroll 数据已加载，否则上拉事件只会执行一次
-                    this.scrollY.refresh();
-                });
-            } else {
-                this.scrollY.refresh();
-            }
-        },
-        changeScoll(val) {
-            console.log(val);
-            this.$nextTick(function () {
-                this.initNormalY();
-            });
-        },
+        // initNormalY() {
+        //     if (!this.scrollY) {
+        //         this.scrollY = new BScroll('.wrapper', {
+        //             scrollX: false,
+        //             scrollY: true,
+        //             click: true,
+        //             pullUpLoad: {
+        //                 threshold: -50, // 当上拉距离超过30px时触发 pullingUp 事件
+        //             },
+        //         });
+        //         let that = this;
+        //         this.scrollY.on('pullingUp', () => {
+        //             console.log('下拉完成');
+        //             that.num++;
+        //             this.scrollY.finishPullUp(); // 事情做完，需要调用此方法告诉 better-scroll 数据已加载，否则上拉事件只会执行一次
+        //             this.scrollY.refresh();
+        //         });
+        //     } else {
+        //         this.scrollY.refresh();
+        //     }
+        // },
+        // changeScoll(val) {
+        //     console.log('reyin', val);
+        //     this.$nextTick(function () {
+        //         this.initNormalY();
+        //     });
+        // },
     },
 };
 </script>

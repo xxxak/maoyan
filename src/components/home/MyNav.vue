@@ -1,6 +1,8 @@
 <template>
     <div class="box">
-        <div class="map" @click="gotoCity"><span>杭州</span></div>
+        <div class="map" @click="gotoCity">
+            <span>{{ city }}</span>
+        </div>
         <ul>
             <li v-for="(item, index) in taps" :key="item[0]" @click.prevent="changeSty(index, $event)">
                 <router-link :to="item[1]" :class="{ isColor: iscolor == index }">{{ item[0] }}</router-link>
@@ -11,6 +13,7 @@
     </div>
 </template>
 <script>
+import { mapState } from 'vuex';
 export default {
     data() {
         return {
@@ -23,6 +26,12 @@ export default {
             tapLeft: sessionStorage.getItem('tapLeft') | 8,
             iscolor: sessionStorage.getItem('iscolor') | 0,
         };
+    },
+    computed: {
+        ...mapState([
+            // 映射 this.count 为 store.state.count
+            'city',
+        ]),
     },
     watch: {
         $route(val) {

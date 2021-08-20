@@ -1,50 +1,52 @@
 <template>
     <div class="reying">
-        <!-- 最受好评 -->
-        <div class="haopingMovie">
-            <p class="title">最受好评电影</p>
-            <div class="haoingList wrapper1">
-                <ul class="thisul">
-                    <li v-for="item in RateList" :key="item._id" @click.prevent="">
-                        <a href="">
-                            <div class="movieImg">
-                                <img :src="item['imgUrl']" alt="#" />
-                                <div class="shodow">
-                                    <span v-if="item.score">观众评分: {{ item.score }}</span>
-                                    <span v-else>{{ item.wishNum }}人想看</span>
+        <div class="contain">
+            <!-- 最受好评 -->
+            <div class="haopingMovie">
+                <p class="title">最受好评电影</p>
+                <div class="haoingList wrapper1">
+                    <ul class="thisul" @click="initNormal">
+                        <li v-for="item in RateList" :key="item._id" @click.prevent="">
+                            <a href="">
+                                <div class="movieImg">
+                                    <img :src="item['imgUrl']" alt="#" />
+                                    <div class="shodow">
+                                        <span v-if="item.score">观众评分: {{ item.score }}</span>
+                                        <span v-else>{{ item.wishNum }}人想看</span>
+                                    </div>
                                 </div>
-                            </div>
-                            <p>{{ item['title'] }}</p>
-                        </a>
-                    </li>
-                </ul>
+                                <p>{{ item['title'] }}</p>
+                            </a>
+                        </li>
+                    </ul>
+                </div>
             </div>
-        </div>
-        <!-- 更多电影 -->
-        <div class="moreMovies">
-            <div
-                class="moreMovieItem"
-                v-for="(item, index) in MoviesList"
-                :key="index"
-                @click="gotoDetail(item.movieid)"
-            >
-                <div class="moreMvImg">
-                    <img :src="item['img'].replace('/w.h', '')" alt="#" />
-                </div>
-                <div class="moreMvMsg">
-                    <p class="moviesName">
-                        {{ item['nm'] }}
-                        <i :class="item.version | filterVersion"></i>
-                    </p>
-                    <p class="score">
-                        <i v-if="item.sc != 0">观众评分{{ item['sc'] }}</i>
-                        <span v-else>目前暂无评分</span>
-                    </p>
-                    <p class="start">主演 :{{ item['star'] }}</p>
-                    <p class="showInfo">{{ item['showInfo'] }}</p>
-                </div>
-                <div class="goupiao">
-                    <span>购票</span>
+            <!-- 更多电影 -->
+            <div class="moreMovies">
+                <div
+                    class="moreMovieItem"
+                    v-for="(item, index) in MoviesList"
+                    :key="index"
+                    @click="gotoDetail(item.movieid)"
+                >
+                    <div class="moreMvImg">
+                        <img :src="item['img'].replace('/w.h', '')" alt="#" />
+                    </div>
+                    <div class="moreMvMsg">
+                        <p class="moviesName">
+                            {{ item['nm'] }}
+                            <i :class="item.version | filterVersion"></i>
+                        </p>
+                        <p class="score">
+                            <i v-if="item.sc != 0">观众评分{{ item['sc'] }}</i>
+                            <span v-else>目前暂无评分</span>
+                        </p>
+                        <p class="start">主演 :{{ item['star'] }}</p>
+                        <p class="showInfo">{{ item['showInfo'] }}</p>
+                    </div>
+                    <div class="goupiao">
+                        <span>购票</span>
+                    </div>
                 </div>
             </div>
         </div>
@@ -54,17 +56,14 @@
 import BScroll from 'better-scroll';
 
 export default {
-    props: ['num'],
     watch: {
         num: function () {
-            // console.log('reying', this.num);
             if (this.num <= 32) {
                 console.log(this.allMoreId.slice(this.num, this.num + 1));
                 this.getMoreList(this.MoresUrl, this.allMoreId.slice(this.num, this.num + 1).toString());
             }
         },
         RateList: function () {
-            // console.log(val);
             this.$nextTick(() => {
                 this.initNormal();
             });
@@ -78,9 +77,11 @@ export default {
             MoviesList: [],
             allMoreId: [],
             MoresUrl: 'http://www.pudge.wang:3080/api/movies/more',
+            num: 12,
         };
     },
     filters: {
+        // 2d 3d imax 标识
         filterVersion(val) {
             if (val == 'v2d imax') {
                 return 'bk2dImax';
@@ -99,6 +100,7 @@ export default {
             this.$router.push('/xianqin/' + data);
         },
         initNormal() {
+            console.log('initscoll');
             if (!this.scroll) {
                 this.scroll = new BScroll('.wrapper1', {
                     scrollX: true,
@@ -110,15 +112,32 @@ export default {
                 this.scroll.refresh();
             }
         },
+        initNormalY() {
+            if (!this.scrollY) {
+                this.scrollY = new BScroll('.reying', {
+                    scrollX: false,
+                    scrollY: true,
+                    click: true,
+                    pullUpLoad: {
+                        threshold: -50, // 当上拉距离超过30px时触发 pullingUp 事件
+                    },
+                });
+                let that = this;
+                this.scrollY.on('pullingUp', () => {
+                    console.log('下拉完成');
+                    that.num++;
+                    this.scrollY.finishPullUp(); // 事情做完，需要调用此方法告诉 better-scroll 数据已加载，否则上拉事件只会执行一次
+                    this.scrollY.refresh();
+                });
+            } else {
+                this.scrollY.refresh();
+            }
+        },
         getRatedList(url) {
             fetch(url)
                 .then(response => response.json())
                 .then(res => {
                     this.RateList = res.result;
-                    // console.log(this.RateList);
-                    this.$nextTick(function () {
-                        this.initNormal();
-                    });
                 });
         },
         // 获取更多电影
@@ -127,9 +146,8 @@ export default {
                 .then(response => response.json())
                 .then(res => {
                     this.MoviesList = res.result;
-                    // console.log(this.MoviesList);
                     this.allMoreId = res.ids;
-                    this.$emit('scollChange', 'gaibian');
+                    // this.$emit('scollChange', 'gaibian');
                 });
         },
         getMoreList(url, string) {
@@ -149,11 +167,26 @@ export default {
     mounted() {
         this.getRatedList(this.RatedUrl);
         this.getMoviesList(this.MoreMvUrl);
+        this.$nextTick(() => {
+            console.log(document.querySelector('.thisul').offsetWidth);
+            setTimeout(this.initNormal, 1000);
+            setTimeout(this.initNormalY, 1000);
+        });
     },
 };
 </script>
 <style lang="less" scoped>
 @import '../../assets/css/var.less';
+.reying {
+    width: 100%;
+    background-color: #f5f5f5;
+    overflow: hidden;
+    position: absolute;
+    top: 0;
+    bottom: 0;
+    left: 0;
+    right: 0;
+}
 .moreMovies {
     margin-top: 15px;
     .moreMovieItem {

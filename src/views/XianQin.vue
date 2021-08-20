@@ -42,7 +42,7 @@ export default {
             const res = await detailApi({ id: newid ? newid : this.id });
             // console.log(res);
             if (res.status === 0) {
-                this.detailInfo = res.result;
+                this.detail = res.result;
             }
         },
         // 获取好评电影列表
@@ -56,36 +56,32 @@ export default {
             })
                 .then(response => response.json())
                 .then(res => {
-                    // console.log(movieId);
                     this.detail = res.result;
-                    // console.log(this.detail);
                 });
         },
         fn(result) {
-            console.log(result);
             this.detail = result;
-            console.log(this.detail);
         },
     },
     async beforeRouteEnter(to, from, next) {
-        console.log(to.params.movieId);
-        console.log(from);
+        // console.log('触发了beforeRouteEnter', 'to:', to, 'from', from);
+
         const res = await detailApi({ id: to.params.movieId });
-        console.log(res);
         next(vm => {
             vm.fn(res.result);
-            console.log(vm);
         });
         // ...
     },
     beforeRouteUpdate(to, from, next) {
+        console.log('触发了beforeRouteUpdate', 'to:', to, 'from', from);
         // 在当前路由改变，但是该组件被复用时调用
         // 举例来说，对于一个带有动态参数的路径 /foo/:id，在 /foo/1 和 /foo/2 之间跳转的时候，
         // 由于会渲染同样的 Foo 组件，因此组件实例会被复用。而这个钩子就会在这个情况下被调用。
         // 可以访问组件实例 `this`
         // 猜你喜欢场景
-        // console.log(to.params.id);
-        this.getData(to.params.id);
+        console.log(to.params.movieId);
+        this.getDetail(this.moreUrL, this.movieId);
+        this.getData(to.params.movieId);
 
         next();
     },

@@ -32,11 +32,11 @@ export default {
                 this.stagePhotoList = this.detail.photos;
                 await this.$nextTick(function () {
                     // console.log(this.detail);
-                    console.log(1, document.querySelector('.warpper2 ul').offsetWidth);
+                    // console.log(1, document.querySelector('.warpper2 ul').offsetWidth);
                 });
 
                 setTimeout(() => {
-                    console.log(2, document.querySelector('.warpper2 ul').offsetWidth);
+                    // console.log(2, document.querySelector('.warpper2 ul').offsetWidth);
                     this.initScoll();
                 }, 500);
             }
@@ -50,7 +50,7 @@ export default {
         },
         initScoll() {
             if (!this.sc) {
-                console.log('初始化');
+                // console.log('初始化');
                 this.sc = new BScroll('.warpper2', {
                     scrollX: true,
                     scrollY: false,
