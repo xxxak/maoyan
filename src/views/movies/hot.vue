@@ -1,31 +1,20 @@
 <template>
-    <div class="mobile">
-        <!-- <header>
-            <MyHeader />
-            <Logo></Logo>
-            <MyNaV />
-        </header>
-        <main class="wrapper">
-          
-            <re-ying :num="num" @scollChange="changeScoll" class="reyin"></re-ying>
-        </main>  -->
-        <router-view></router-view>
-        <footer><myFooter /></footer>
-    </div>
+    <div class="wrapper"><re-ying :num="num" @scollChange="changeScoll" class="reyin"></re-ying></div>
 </template>
-<script>
-import myFooter from '../components/home/MyFooter';
-import BScroll from 'better-scroll';
 
+<script>
+import ReYing from '../../components/home/ReYing';
+import BScroll from 'better-scroll';
 export default {
+    components: { ReYing },
+    props: {},
     data() {
         return {
             num: 12,
         };
     },
-    components: {
-        myFooter,
-    },
+    watch: {},
+    computed: {},
     methods: {
         initNormalY() {
             if (!this.scrollY) {
@@ -55,26 +44,8 @@ export default {
             });
         },
     },
+    created() {},
+    mounted() {},
 };
 </script>
-<style lang="less" scoped>
-.mobile {
-    height: 100vh;
-    display: flex;
-    width: 100%;
-    overflow: hidden;
-    flex-direction: column;
-    flex: 1;
-    justify-content: space-between;
-    position: relative;
-
-    footer {
-        width: 100%;
-        height: 50px;
-        background: red;
-        position: absolute;
-        bottom: 0;
-        left: 0;
-    }
-}
-</style>
+<style lang="less" scoped></style>
