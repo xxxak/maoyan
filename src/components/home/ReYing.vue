@@ -54,48 +54,36 @@
 </template>
 <script>
 import BScroll from 'better-scroll';
-
+import { mapState, mapActions } from 'vuex';
 export default {
-    watch: {
-        num: function () {
-            if (this.num <= 32) {
-                console.log(this.allMoreId.slice(this.num, this.num + 1));
-                this.getMoreList(this.MoresUrl, this.allMoreId.slice(this.num, this.num + 1).toString());
-            }
-        },
-        RateList: function () {
-            this.$nextTick(() => {
-                this.initNormal();
-            });
-        },
-    },
     data() {
         return {
-            RatedUrl: 'http://www.pudge.wang:3080/api/rated/list',
-            MoreMvUrl: 'http://www.pudge.wang:3080/api/movies/list',
-            RateList: [],
-            MoviesList: [],
-            allMoreId: [],
-            MoresUrl: 'http://www.pudge.wang:3080/api/movies/more',
+            thisallid: [],
             num: 12,
         };
     },
-    filters: {
-        // 2d 3d imax 标识
-        filterVersion(val) {
-            if (val == 'v2d imax') {
-                return 'bk2dImax';
-            } else if (val == 'v3d imax') {
-                return 'bk3dImax';
-            } else if (val == 'v3d') {
-                return 'bk3d';
-            } else {
-                return 'bknone';
+    watch: {
+        num: function () {
+            if (this.num <= 32) {
+                let str = this.allMoreId.slice(this.num, this.num + 1).toString();
+                // 下拉加载新数组
+                this.asyncgetMoreMovies({ ids: str });
             }
         },
     },
+    mounted() {
+        this.asyncgetMoreMovie().then(() => {});
+        this.asyncgetRate().then(() => {
+            this.initNormal();
+        });
+        this.initNormalY();
+    },
+    computed: {
+        ...mapState(['RateList', 'MoviesList', 'allMoreId']),
+    },
     methods: {
         // 获取好评电影列表
+        ...mapActions(['asyncgetRate', 'asyncgetMoreMovie', 'asyncgetMoreMovies']),
         gotoDetail(data) {
             this.$router.push('/xianqin/' + data);
         },
@@ -107,7 +95,6 @@ export default {
                     scrollY: false,
                     click: true,
                 });
-                // console.log(this.scroll);
             } else {
                 this.scroll.refresh();
             }
@@ -115,17 +102,13 @@ export default {
         initNormalY() {
             if (!this.scrollY) {
                 this.scrollY = new BScroll('.reying', {
-                    scrollX: false,
-                    scrollY: true,
                     click: true,
                     pullUpLoad: {
                         threshold: -50, // 当上拉距离超过30px时触发 pullingUp 事件
                     },
                 });
-                let that = this;
                 this.scrollY.on('pullingUp', () => {
-                    console.log('下拉完成');
-                    that.num++;
+                    this.num++;
                     this.scrollY.finishPullUp(); // 事情做完，需要调用此方法告诉 better-scroll 数据已加载，否则上拉事件只会执行一次
                     this.scrollY.refresh();
                 });
@@ -133,45 +116,13 @@ export default {
                 this.scrollY.refresh();
             }
         },
-        getRatedList(url) {
-            fetch(url)
-                .then(response => response.json())
-                .then(res => {
-                    this.RateList = res.result;
-                });
-        },
-        // 获取更多电影
-        getMoviesList(url) {
-            fetch(url)
-                .then(response => response.json())
-                .then(res => {
-                    this.MoviesList = res.result;
-                    this.allMoreId = res.ids;
-                    // this.$emit('scollChange', 'gaibian');
-                });
-        },
-        getMoreList(url, string) {
-            fetch(url, {
-                body: JSON.stringify({ ids: string }),
-                headers: {
-                    'content-type': 'application/json',
-                },
-                method: 'POST',
-            })
-                .then(response => response.json())
-                .then(res => {
-                    this.MoviesList = this.MoviesList.concat(res.result);
-                });
-        },
     },
-    mounted() {
-        this.getRatedList(this.RatedUrl);
-        this.getMoviesList(this.MoreMvUrl);
-        this.$nextTick(() => {
-            console.log(document.querySelector('.thisul').offsetWidth);
-            setTimeout(this.initNormal, 1000);
-            setTimeout(this.initNormalY, 1000);
-        });
+    filters: {
+        // 2d 3d imax 标识
+        filterVersion(val) {
+            let x = { 'v2d imax': 'bk2dImax', 'v3d imax': 'bk3dImax', v3d: 'bk3d' };
+            return x[val];
+        },
     },
 };
 </script>
@@ -225,26 +176,29 @@ export default {
                 color: #333;
                 font-weight: 700;
                 i {
-                    display: inline-block;
+                    display: none;
                     background-size: contain;
                     background-repeat: no-repeat;
                     height: 14px;
                     width: 17px;
                 }
-                .bknone {
-                    display: none;
-                }
+                // .bknone {
+                //     display: none;
+                // }
                 .bk3d {
+                    display: inline-block;
                     background-image: url('../../assets/img/3d.png');
                     height: 14px;
                     width: 17px;
                 }
                 .bk2dImax {
+                    display: inline-block;
                     background-image: url('../../assets/img/2dimax.png');
                     height: 14px;
                     width: 43px;
                 }
                 .bk3dImax {
+                    display: inline-block;
                     background-image: url('../../assets/img/3dimax.png');
                     height: 14px;
                     width: 43px;

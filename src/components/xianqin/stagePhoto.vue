@@ -30,13 +30,9 @@ export default {
         detail: async function () {
             if (this.detail.photos) {
                 this.stagePhotoList = this.detail.photos;
-                await this.$nextTick(function () {
-                    // console.log(this.detail);
-                    // console.log(1, document.querySelector('.warpper2 ul').offsetWidth);
-                });
+                await this.$nextTick(function () {});
 
                 setTimeout(() => {
-                    // console.log(2, document.querySelector('.warpper2 ul').offsetWidth);
                     this.initScoll();
                 }, 500);
             }
@@ -64,12 +60,6 @@ export default {
             console.log(3, document.querySelector('.warpper2 ul').offsetWidth);
         },
     },
-    // mounted() {
-    //     this.initScoll();
-    // },
-    // updated() {
-    //     this.initScoll();
-    // },
 };
 </script>
 <style lang="less" scoped>

@@ -8,7 +8,7 @@
                 </li>
             </ul>
         </div>
-        <div class="List" v-if="cityList == 0 ? false : true">
+        <div class="List">
             <div v-for="item in cityList" :key="item.prefix">
                 <p class="title">{{ item.prefix.toUpperCase() }}</p>
                 <ul>
@@ -22,39 +22,18 @@
 </template>
 
 <script>
-import { areaApi } from '@/utils/api';
+import { mapState, mapActions } from 'vuex';
 export default {
-    components: {},
-    props: {},
-    data() {
-        return {
-            cityList: [],
-            hotCity: [],
-        };
-    },
-    watch: {},
-    computed: {},
+    computed: { ...mapState(['cityList', 'hotCity']) },
     methods: {
-        async getData() {
-            const res = await areaApi();
-            console.log(res);
-            if (res.status == 0) {
-                this.cityList = res.result.slice(1);
-                this.hotCity = res.result[0].cities;
-                console.log('citylist', this.cityList);
-                console.log(this.hotCity);
-            } else {
-                console.log(res.msg);
-            }
-        },
+        ...mapActions(['asyncgetCityList']),
         changeCity(val) {
             this.$store.commit('chanegCity', val);
             this.$router.push('/home');
         },
     },
-    created() {},
     mounted() {
-        this.getData();
+        this.asyncgetCityList();
     },
 };
 </script>

@@ -41,7 +41,6 @@ export default {
     },
     methods: {
         routerChange(index, topath) {
-            // console.log(this.$route.path);
             this.active = index;
             sessionStorage.setItem('active', this.active);
             this.$router.push(topath);
